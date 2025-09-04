@@ -1,2 +1,2 @@
 # Shared
-Public shared.   For letting people use my files
+Public shared.   For letting people use my files.
