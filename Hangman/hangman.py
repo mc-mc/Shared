@@ -3,8 +3,31 @@ import tkinter as tk
 import tkinter.messagebox
 from tkinter import *
 import random
-import playsound
+import pygame,threading,time
 
+
+def playsound_win(filename, block=True):
+    """
+    Replacement for playsound._playsoundWin using pygame.
+
+    Args:
+        filename (str): Path to the audio file (MP3/WAV).
+        block (bool): If True, wait until the sound finishes.
+    """
+    pygame.mixer.music.load(filename)
+    pygame.mixer.music.play()
+
+    if block:
+        while pygame.mixer.music.get_busy():
+            time.sleep(0.1)
+    else:
+        # If non-blocking, optionally run in a separate thread
+        def _wait():
+            while pygame.mixer.music.get_busy():
+                time.sleep(0.1)
+        
+        
+        
 class Hangman(Frame):
 
     bad_tries_count = 0
@@ -68,16 +91,16 @@ class Hangman(Frame):
             for i in range(1,len(self.word) + 1):
                 if self.word[i - 1] == key.upper():
                     self.arr[i] = 1
-            playsound._playsoundWin("ding.mp3",False)
+            playsound_win("ding.mp3",False)
         else:
             # Increment bad tries count
         
             l = self.guessed.find(key.upper())
             if l== -1:
                 self.bad_tries_count +=1
-                playsound._playsoundWin("wrong.mp3",False)
+                playsound_win("wrong.mp3",False)
             else:
-                playsound._playsoundWin("wrong2.mp3",False)
+                playsound_win("wrong2.mp3",False)
 
         # Update gussed letters list
         l = self.guessed.find(key.upper())
@@ -95,14 +118,14 @@ class Hangman(Frame):
             if self.arr[i] == 0:
                 won = 'N'
         if won == 'Y':
-            playsound._playsoundWin("success.mp3",False)
+            playsound_win("success.mp3",False)
             tkinter.messagebox.showinfo("Wow!","You won!")
             self.reset_game()
 
 
         # CHeck for loss
         if self.bad_tries_count > 7:
-            playsound._playsoundWin("death.mp3",False)
+            playsound_win("death.mp3",False)
             tkinter.messagebox.showinfo("Boo!","You lost!\nWord was:"+self.word)
             self.reset_game()
 
@@ -214,6 +237,7 @@ root = Tk()
 root.geometry("404x402")
 cw = 200
 ch = 400 
+pygame.mixer.init()
 # Create app object
 hm = Hangman(root)
 
