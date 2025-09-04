@@ -5,6 +5,7 @@ from tkinter import *
 import random
 import pygame,threading,time
 
+# Run pip install pygame  to install the pygame libary which allows it to play sounds.
 
 def playsound_win(filename, block=True):
     """
